@@ -1,0 +1,160 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "Foot API",
+      "version": "1.0.0",
+      "description": "API REST simple pour gérer des équipes de football."
+    },
+    "servers": [
+      { "url": "http://localhost:3000", "description": "Local" }
+    ],
+    "tags": [
+      { "name": "Teams", "description": "Gestion des équipes" }
+    ],
+    "paths": {
+      "/teams": {
+        "get": {
+          "tags": ["Teams"],
+          "summary": "Lister les équipes",
+          "responses": {
+            "200": {
+              "description": "Liste des équipes",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/TeamsListResponse" },
+                  "examples": {
+                    "example": {
+                      "value": {
+                        "count": 3,
+                        "teams": [
+                          { "id": 1, "name": "Real Madrid", "country": "Spain" },
+                          { "id": 2, "name": "Manchester City", "country": "England" },
+                          { "id": 3, "name": "PSG", "country": "France" }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Teams"],
+          "summary": "Créer une équipe",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateTeamRequest" },
+                "examples": {
+                  "example": {
+                    "value": { "name": "FC Barcelona", "country": "Spain" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Équipe créée",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Team" }
+                }
+              }
+            },
+            "400": {
+              "description": "Données invalides",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                  "examples": {
+                    "missingFields": {
+                      "value": { "error": "name and country are required" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/teams/{id}": {
+        "get": {
+          "tags": ["Teams"],
+          "summary": "Obtenir une équipe par ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "integer", "minimum": 1 },
+              "description": "Identifiant de l’équipe"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Détail de l’équipe",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Team" }
+                }
+              }
+            },
+            "404": {
+              "description": "Équipe introuvable",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                  "examples": {
+                    "notFound": { "value": { "error": "Team not found" } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Team": {
+          "type": "object",
+          "required": ["id", "name", "country"],
+          "properties": {
+            "id": { "type": "integer", "example": 1 },
+            "name": { "type": "string", "example": "Real Madrid" },
+            "country": { "type": "string", "example": "Spain" }
+          }
+        },
+        "CreateTeamRequest": {
+          "type": "object",
+          "required": ["name", "country"],
+          "properties": {
+            "name": { "type": "string", "example": "FC Barcelona" },
+            "country": { "type": "string", "example": "Spain" }
+          }
+        },
+        "TeamsListResponse": {
+          "type": "object",
+          "required": ["count", "teams"],
+          "properties": {
+            "count": { "type": "integer", "example": 3 },
+            "teams": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/Team" }
+            }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "required": ["error"],
+          "properties": {
+            "error": { "type": "string", "example": "Team not found" }
+          }
+        }
+      }
+    }
+  }
+  
