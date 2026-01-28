@@ -33,12 +33,12 @@ Retourne toutes les équipes disponibles.
 }
 ```
 
-### 🔹 2. Récupérer une équipe par ID
+### 2. Récupérer une équipe par ID
 **GET** `/teams/{id}`
 
 Retourne le détail d’une équipe spécifique.
 
-#### 📥 Paramètres
+#### Paramètres
 
 | Nom | Type   | Description             |
 | --- | ------ | ----------------------- |
@@ -99,7 +99,7 @@ curl -X POST http://localhost:3000/teams \
 docker compose up --build
 
 - L’API sera accessible sur :
-👉 http://localhost:3000
+  http://localhost:3000
 
 
 
