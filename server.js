@@ -2,6 +2,8 @@ const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const promClient = require("prom-client");
 
+const APP_VERSION = process.env.APP_VERSION || "dev";
+
 const app = express();
 const openapi = require("./openapi.json");
 
@@ -59,7 +61,7 @@ app.use((req, res, next) => {
 
 // --- Routes de base pour le soutien ---
 app.get("/health", (req, res) => {
-  res.json({ status: "ok", service: "Footo-Stats", time: new Date().toISOString() });
+  res.json({ status: "ok", service: "Footo-Stats", version: APP_VERSION,time: new Date().toISOString() });
 });
 
 app.get("/metrics", async (req, res) => {
@@ -69,7 +71,7 @@ app.get("/metrics", async (req, res) => {
 
 // --- API ---
 app.get("/teams", (req, res) => {
-  res.json({ count: teams.length, teams });
+  res.json({ version: APP_VERSION, count: teams.length, teams });
 });
 
 app.get("/teams/:id", (req, res) => {
