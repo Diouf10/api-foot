@@ -2,7 +2,7 @@ const express = require("express");
 const swaggerUi = require("swagger-ui-express");
 const promClient = require("prom-client");
 
-const APP_VERSION = process.env.APP_VERSION || "dev";
+const APP_VERSION = process.env.VERSION || "dev";
 
 const app = express();
 const openapi = require("./openapi.json");
