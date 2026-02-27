@@ -1,31 +1,47 @@
 services:
   foot-api:
     build: .
+    container_name: foot-api
     ports:
       - "3000:3000"
     environment:
-      - PORT=3000
-    # Optionnel: limite CPU pour faciliter une démo de saturation
-    # deploy:
-    #   resources:
-    #     limits:
-    #       cpus: '0.50'
+      PORT: "3000"
+    restart: unless-stopped
+    # optionnel (recommandé sur 1GB)
+    mem_limit: 256m
 
   prometheus:
     image: prom/prometheus:latest
+    container_name: prometheus
     ports:
       - "9090:9090"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=24h"
+    restart: unless-stopped
     depends_on:
       - foot-api
+    mem_limit: 256m
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     ports:
       - "3001:3000"
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
     depends_on:
       - prometheus
+    mem_limit: 256m
+
+volumes:
+  prometheus_data:
+  grafana_data:
