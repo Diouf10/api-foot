@@ -128,5 +128,43 @@ app.use((err, req, res, next) => {
   res.status(500).json({ code: "InternalError", message: "Internal server error" });
 });
 
+
+// support
+// --- Support -> envoie vers n8n (qui créera le ticket Zammad) ---
+app.post("/support-ticket", async (req, res) => {
+  try {
+    const N8N_URL = process.env.N8N_SUPPORT_WEBHOOK_URL; 
+    // ex: http://142.93.156.69:5678/webhook/support-ticket
+
+    if (!N8N_URL) {
+      return res.status(500).json({ error: "N8N_SUPPORT_WEBHOOK_URL is not set" });
+    }
+
+    const payload = {
+      name: req.body.name,
+      email: req.body.email,
+      subject: req.body.subject,
+      message: req.body.message,
+      priority: req.body.priority ?? "P2",
+    };
+
+    // Node 18+ a fetch global; sinon npm i node-fetch
+    const r = await fetch(N8N_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const text = await r.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = text; }
+
+    return res.status(r.status).json(data);
+  } catch (e) {
+    console.error("[SUPPORT-TICKET]", e);
+    return res.status(500).json({ error: "Failed to forward to n8n" });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Foot API running on port ${PORT}`));
