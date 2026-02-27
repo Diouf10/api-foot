@@ -15,9 +15,9 @@ app.use(morgan("combined"));
 
 // --- Données mock ---
 let teams = [
-  { id: 1, name: "Real Madrid", country: "Spain" },
-  { id: 2, name: "Manchester City", country: "England" },
-  { id: 3, name: "PSG", country: "France" }
+  { id: 1, name: "Real Madrid", country: "Spain", league: "La Liga" },
+  { id: 2, name: "Manchester City", country: "England", league: "Premier League" },
+  { id: 3, name: "PSG", country: "France", league: "Ligue 1" }
 ];
 
 // --- Prometheus metrics ---
