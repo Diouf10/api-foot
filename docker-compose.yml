@@ -61,4 +61,4 @@ services:
 volumes:
   prometheus_data:
   grafana_data:
-  n8n:
+  n8n_data:
